@@ -47,6 +47,7 @@ Commands:
 				install <ig_url> <fhir_server> token "123"
 				install <ig_url> <fhir_server> custom test
 	`)
+		panic("There is an error in house")
 
 	case "install":
 		params := &Params{}
