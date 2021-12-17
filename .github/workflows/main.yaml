@@ -1,4 +1,4 @@
-name: Create go binaries
+name: Create go binaries for linux, windows and mac
 
 on:
   release:
@@ -16,8 +16,11 @@ jobs:
         with:
           go-version: 1.17
 
-      - name: Build
+      - name: Build Releases
         run:  cd ./goinstant && ./buildreleases.sh
+      
+      - name: Test binaries
+        run: ./goinstant/bin/goinstant-linux
 
       - name: Release
         uses: softprops/action-gh-release@v1
