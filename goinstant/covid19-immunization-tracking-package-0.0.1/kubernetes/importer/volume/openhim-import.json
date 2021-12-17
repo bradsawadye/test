@@ -1,0 +1,170 @@
+{
+  "Channels": [
+    {
+      "methods": [
+        "GET",
+        "POST",
+        "DELETE",
+        "PUT"
+      ],
+      "type": "http",
+      "allow": [
+        "instant"
+      ],
+      "whitelist": [],
+      "authType": "private",
+      "matchContentTypes": [],
+      "properties": [],
+      "txViewAcl": [],
+      "txViewFullAcl": [],
+      "txRerunAcl": [],
+      "status": "enabled",
+      "rewriteUrls": false,
+      "addAutoRewriteRules": true,
+      "autoRetryEnabled": false,
+      "autoRetryPeriodMinutes": 60,
+      "routes": [
+        {
+          "type": "http",
+          "status": "enabled",
+          "forwardAuthHeader": false,
+          "name": "Hapi Fhir",
+          "secured": false,
+          "host": "hapi-fhir-server-service",
+          "port": 8080,
+          "path": "/fhir/Immunization",
+          "pathTransform": "",
+          "primary": true,
+          "username": "",
+          "password": ""
+        }
+      ],
+      "requestBody": true,
+      "responseBody": true,
+      "rewriteUrlsConfig": [],
+      "name": "Patient Covid19 Immunization",
+      "urlPattern": "^/Immunization$",
+      "matchContentRegex": null,
+      "matchContentXpath": null,
+      "matchContentValue": null,
+      "matchContentJson": null,
+      "pollingSchedule": null,
+      "tcpHost": null,
+      "tcpPort": null,
+      "updatedBy": {
+        "id": "604235eb859eec0013a19aaa",
+        "name": "Super User"
+      },
+      "alerts": []
+    },
+    {
+      "methods": [
+        "GET"
+      ],
+      "type": "http",
+      "allow": [
+        "instant"
+      ],
+      "whitelist": [],
+      "authType": "private",
+      "matchContentTypes": [],
+      "properties": [],
+      "txViewAcl": [],
+      "txViewFullAcl": [],
+      "txRerunAcl": [],
+      "status": "enabled",
+      "rewriteUrls": false,
+      "addAutoRewriteRules": true,
+      "autoRetryEnabled": false,
+      "autoRetryPeriodMinutes": 60,
+      "routes": [
+        {
+          "type": "http",
+          "status": "enabled",
+          "forwardAuthHeader": false,
+          "name": "Hapi Fhir",
+          "secured": false,
+          "host": "hapi-fhir-server-service",
+          "port": 8080,
+          "path": "/fhir/Patient",
+          "pathTransform": "",
+          "primary": true,
+          "username": "",
+          "password": ""
+        }
+      ],
+      "requestBody": true,
+      "responseBody": true,
+      "rewriteUrlsConfig": [],
+      "name": "Patient Search",
+      "urlPattern": "^/Patient.*$",
+      "matchContentRegex": null,
+      "matchContentXpath": null,
+      "matchContentValue": null,
+      "matchContentJson": null,
+      "pollingSchedule": null,
+      "tcpHost": null,
+      "tcpPort": null,
+      "updatedBy": {
+        "id": "604235eb859eec0013a19aaa",
+        "name": "Super User"
+      },
+      "alerts": []
+    },
+    {
+      "methods": [
+        "POST",
+        "PUT"
+      ],
+      "type": "http",
+      "allow": [
+        "instant"
+      ],
+      "whitelist": [],
+      "authType": "private",
+      "matchContentTypes": [],
+      "properties": [],
+      "txViewAcl": [],
+      "txViewFullAcl": [],
+      "txRerunAcl": [],
+      "status": "enabled",
+      "rewriteUrls": false,
+      "addAutoRewriteRules": true,
+      "autoRetryEnabled": false,
+      "autoRetryPeriodMinutes": 60,
+      "routes": [
+        {
+          "type": "http",
+          "status": "enabled",
+          "forwardAuthHeader": false,
+          "name": "Generic Mapping Mediator",
+          "secured": false,
+          "host": "covid19-immunization-mapper-service",
+          "port": 3005,
+          "path": "",
+          "pathTransform": "",
+          "primary": true,
+          "username": "",
+          "password": ""
+        }
+      ],
+      "requestBody": true,
+      "responseBody": true,
+      "rewriteUrlsConfig": [],
+      "name": "Patient Registration for Covid19 Immunization",
+      "urlPattern": "^/Patient.*$",
+      "matchContentRegex": null,
+      "matchContentXpath": null,
+      "matchContentValue": null,
+      "matchContentJson": null,
+      "pollingSchedule": null,
+      "tcpHost": null,
+      "tcpPort": null,
+      "updatedBy": {
+        "id": "604235eb859eec0013a19aaa",
+        "name": "Super User"
+      },
+      "alerts": []
+    }
+  ]
+}

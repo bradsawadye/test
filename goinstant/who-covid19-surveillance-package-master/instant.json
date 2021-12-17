@@ -1,0 +1,8 @@
+{
+  "id": "covid19surveillance",
+  "name": "WHO COVID19 Surveillance Package",
+  "description": "",
+  "type": "infrastructure",
+  "version": "v0.0.0",
+  "dependencies": ["core", "hmis"]
+}

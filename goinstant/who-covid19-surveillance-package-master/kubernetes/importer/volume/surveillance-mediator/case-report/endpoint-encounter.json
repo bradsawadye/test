@@ -1,0 +1,36 @@
+{
+  "name": "FHIR - Orchestrate Encounter Data into one resource",
+  "description": "",
+  "endpoint": {
+    "pattern": "/create-encounter"
+  },
+  "transformation": {
+    "input": "JSON",
+    "output": "JSON"
+  },
+  "inputTransforms": {
+    "reference": "$exists(requestBody.reference) ? {'location': {'reference': requestBody.reference}} : null"
+  },
+  "inputMapping": {
+    "constants.template": "encounter",
+    "requestBody.id": "encounter.fullUrl",
+    "transforms.reference": "encounter.resource.location[]+",
+    "requestBody.period": "encounter.resource.period"
+  },
+  "constants": {
+    "template": {
+      "resource": {
+        "resourceType": "Encounter",
+        "status": "in-progress",
+        "class": {
+          "code": "ACUTE",
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode"
+        }
+      },
+      "request": {
+        "method": "POST",
+        "url": "Encounter"
+      }
+    }
+  }
+}

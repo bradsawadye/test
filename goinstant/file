@@ -1,0 +1,269 @@
+
+func mountCustomPackage(pathToPackage string) {
+	gitRegex := regexp.MustCompile(".git")
+	httpRegex := regexp.MustCompile("http")
+	zipRegex := regexp.MustCompile(".zip")
+	tarRegex := regexp.MustCompile(".tar")
+
+	if gitRegex.MatchString(pathToPackage) {
+		cmd := exec.Command("git", "clone", c)
+		
+		cmdReader, err := cmd.StdoutPipe()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "Error creating StdoutPipe for Cmd", err)
+			return
+		}
+
+		scanner := bufio.NewScanner(cmdReader)
+		go func() {
+			for scanner.Scan() {
+				fmt.Printf("\t > %s\n", scanner.Text())
+			}
+		}()
+
+		err = cmd.Start()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "Error starting Cmd", err)
+			return
+		}
+
+		err = cmd.Wait()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "Error waiting for Cmd", err)
+			return
+		}
+		// Get name of repo
+		urlSplit := strings.Split(pathToPackage, ".")
+		urlPathSplit := strings.split(urlSplit[len(urlSplit)-2], '/')
+		repoName := urlPathSplit[len(urlPathSplit) - 1]
+
+		commandSlice = []string{"cp", "../" + repoName, "instant-openhie:instant/"}
+		RunDockerCommand(commandSlice...)
+	} else if httpRegex.MatchString(pathToPackage) {
+		resp, err := http.Get(pathToPackage)
+		defer resp.Body.Close()
+
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "Error in dowloading custom package", err)
+			return
+		}
+		if resp.StatusCode != 200 {
+			fmt.Fprintln(os.Stderr, "Error in dowloading custom package - http status", resp.StatusCode)
+			return
+		}
+
+		if zipRegex.MatchString(pathToPackage) {
+			tempZip := "temp.zip"
+			output, err := os.Create(tempZip)
+			defer. output.Close()
+
+			_, err := io.Copy(output, resp.Body)
+			if err != nil {
+				fmt.Fprintln("Error in creating zip file:", err)
+				return
+			}
+
+			// Unzip file
+			archive, err := zip.OpenReader(tempZip)
+			if err != nil {
+				fmt.Fprintln("Error in unzipping file:", err)
+				return
+			}
+			defer archive.Close()
+
+			for _, f := range archive.File {
+				filePath := filepath.join("..", f.name)
+				content, err := f.Open()
+				if err != nil {
+					fmt.Fprintln("Error in unzipping file:", err)
+					return
+				}
+				_, err = io.Copy(filePath, content)
+				if err != nil {
+					fmt.Fprintln("Error in copying unzipped file:", err)
+					return
+				}
+				content.Close()
+
+				commandSlice = []string{"cp", "../" + f.name, "instant-openhie:instant/"}
+				RunDockerCommand(commandSlice...)
+			}
+		} else if tar.MatchString(pathToPackage) {
+			var buf bytes.Buffer
+			tw := tar.NewWriter(&buf)
+
+			if _, err := tw.Write([]byte(resp.Body)); err != nil {
+				fmt.Fprintln("Error in extracting tar file:", err)
+				return
+			}
+			if err := tw.Close(); err != nil {
+				log.Fatal(err)
+			}
+			tr := tar.NewReader(&buf)
+
+			for {
+				file, err := tr.Next()
+				if err == io.EOF {
+					break
+				}
+				if err != nil {
+					fmt.Fprintln("Error in extracting tar file:", err)
+					continue
+				}
+				if _, err := io.Copy("../" + file.Name, tr); err != nil {
+					fmt.Fprintln("Error in extracting tar file:", err)
+				}
+
+				commandSlice = []string{"cp", "../" + file.Name, "instant-openhie:instant/"}
+				RunDockerCommand(commandSlice...)
+			}
+		}
+	} else {
+		commandSlice = []string{"cp", pathToPackage, "instant-openhie:instant/"}
+		RunDockerCommand(commandSlice...)
+	}
+}
+
+func mountCustomPackage(pathToPackage string) {
+	gitRegex := regexp.MustCompile(`\.git`)
+	httpRegex := regexp.MustCompile("http")
+	zipRegex := regexp.MustCompile(`\.zip`)
+	tarRegex := regexp.MustCompile(`\.tar`)
+
+	if gitRegex.MatchString(pathToPackage) {
+		cmd := exec.Command("git", "clone", pathToPackage)
+		cmdReader, err := cmd.StdoutPipe()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "Error creating StdoutPipe for Cmd", err)
+			return
+		}
+
+		scanner := bufio.NewScanner(cmdReader)
+		go func() {
+			for scanner.Scan() {
+				fmt.Printf("\t > %s\n", scanner.Text())
+			}
+		}()
+
+		err = cmd.Start()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "Error starting Cmd", err)
+			return
+		}
+
+		err = cmd.Wait()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "Error waiting for Cmd", err)
+			return
+		}
+		// Get name of repo
+		urlSplit := strings.Split(pathToPackage, ".")
+		urlPathSplit := strings.Split(urlSplit[len(urlSplit)-2], "/")
+		repoName := urlPathSplit[len(urlPathSplit) - 1]
+
+		commandSlice := []string{"cp", "./" + repoName, "instant-openhie:instant/"}
+		RunDockerCommand(commandSlice...)
+	} else if httpRegex.MatchString(pathToPackage) {
+		resp, err := http.Get(pathToPackage)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "Error in dowloading custom package", err)
+			return
+		}
+		defer resp.Body.Close()
+		
+		if resp.StatusCode != 200 {
+
+			fmt.Fprintln(os.Stderr, "Error in dowloading custom package - http status", resp.StatusCode)
+			return
+		}
+
+		if zipRegex.MatchString(pathToPackage) {
+			tempZip := "temp.zip"
+			output, err := os.Create(tempZip)
+			defer output.Close()
+
+			_, err = io.Copy(output, resp.Body)
+			if err != nil {
+				fmt.Fprintln(os.Stderr, "Error in creating zip file:", err)
+				return
+			}
+
+			// Unzip file
+			archive, err := zip.OpenReader(tempZip)
+			if err != nil {
+				fmt.Fprintln(os.Stderr,"Error in unzipping file:", err)
+				return
+			}
+			defer archive.Close()
+
+			package := ""
+			for _, f := range archive.File {
+				filePath := filepath.Join("..", f.Name)
+				
+
+				if f.FileInfo().IsDir() {
+					os.MkdirAll(filePath, os.ModePerm)
+					continue
+				}
+
+				content, err := f.Open()
+				if err != nil {
+					fmt.Fprintln(os.Stderr, "Error in unzipping file:", err)
+					return
+				}
+
+				dest, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+				if err != nil {
+					fmt.Fprintln(os.Stderr, "Error in unzipping file:", err)
+					return
+				}
+				_, err = io.Copy(dest, content)
+				if err != nil {
+					fmt.Fprintln(os.Stderr, "Error in copying unzipped file:", err)
+					return
+				}
+				content.Close()
+			}
+			commandSlice := []string{"cp", "../" + package, "instant-openhie:instant/"}
+				RunDockerCommand(commandSlice...)
+			err = os.Remove("./" + tempZip)
+			if err != nil {
+				fmt.Fprintln(os.Stderr, "Error in removing temp file:", err)
+				return
+			}
+		} else if tarRegex.MatchString(pathToPackage) {
+			// var buf bytes.Buffer
+			// tw := tar.NewWriter(&buf)
+
+			// if _, err := tw.Write(resp.Body); err != nil {
+			// 	fmt.Fprintln("Error in extracting tar file:", err)
+			// 	return
+			// }
+			// if err := tw.Close(); err != nil {
+			// 	log.Fatal(err)
+			// }
+			// tr := tar.NewReader(&buf)
+
+			// for {
+			// 	file, err := tr.Next()
+			// 	if err == io.EOF {
+			// 		break
+			// 	}
+			// 	if err != nil {
+			// 		fmt.Fprintln("Error in extracting tar file:", err)
+			// 		continue
+			// 	}
+			// 	if _, err := io.Copy("../" + file.Name, tr); err != nil {
+			// 		fmt.Fprintln("Error in extracting tar file:", err)
+			// 	}
+
+			// 	commandSlice = []string{"cp", "../" + file.Name, "instant-openhie:instant/"}
+			// 	RunDockerCommand(commandSlice...)
+			// }
+		}
+	} else {
+		commandSlice := []string{"cp", pathToPackage, "instant-openhie:instant/"}
+		RunDockerCommand(commandSlice...)
+	}
+}	
+	mountCustomPackage(c)
